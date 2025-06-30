@@ -399,6 +399,26 @@ async function main() {
               args.limit,
               args.cursor,
             );
+            
+            // Optionally filter the response to reduce size
+            if (response.ok && response.channels) {
+              const simplified = {
+                ok: response.ok,
+                channels: response.channels.map((ch: any) => ({
+                  id: ch.id,
+                  name: ch.name,
+                  is_private: ch.is_private,
+                  is_archived: ch.is_archived,
+                  is_member: ch.is_member,
+                  num_members: ch.num_members
+                })),
+                response_metadata: response.response_metadata
+              };
+              return {
+                content: [{ type: "text", text: JSON.stringify(simplified) }],
+              };
+            }
+            
             return {
               content: [{ type: "text", text: JSON.stringify(response) }],
             };
